@@ -1,27 +1,40 @@
-import { useMutation, type QueryOptions } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api/api";
+import type { Resume, StoredResume } from "@/lib/types";
 import { storage } from "../../storage";
 import { queryClient } from "../query-client";
 import { queryKeys } from "../query-keys";
 
-async function parseResume(file: File) {
+interface ParseResumeResponse {
+  message: string;
+  data: {
+    name: string;
+    resume: Resume;
+  };
+}
+
+async function parseResume(file: File): Promise<StoredResume> {
   const formData = new FormData();
   formData.append("resume", file);
 
-  const { data } = await api.post("/resume/parse", formData);
-  return data;
+  const { data } = await api.post<ParseResumeResponse>(
+    "/resume/parse",
+    formData,
+  );
+
+  return {
+    name: data.data.name,
+    resume: data.data.resume,
+    updatedAt: Date.now(),
+  };
 }
 
-export function useParseResume(
-  queryOptions?: Omit<QueryOptions, "mutationFn">,
-) {
+export function useParseResume() {
   return useMutation({
     mutationFn: parseResume,
-    onSuccess: async ({ data }) => {
-      debugger;
-      await storage.setParsedResume(data);
-      queryClient.setQueryData(queryKeys.resume.parsed(), data.resume);
+    onSuccess: async (stored) => {
+      await storage.setParsedResume(stored);
+      queryClient.setQueryData(queryKeys.resume.parsed(), stored);
     },
-    ...queryOptions,
   });
 }
