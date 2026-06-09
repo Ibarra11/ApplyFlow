@@ -1,6 +1,10 @@
 import { Router } from "express";
 import multer from "multer";
 import { PDFParse } from "pdf-parse";
+import { generateText, streamText } from "ai";
+
+import { SYSTEM_PROMPT } from "../ai/system-prompt";
+import { createOpenAI } from "@ai-sdk/openai";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -24,12 +28,37 @@ resumeRouter.post("/parse", upload.single("resume"), async (req, res) => {
 
   const parser = new PDFParse({ data: file.buffer });
 
+  const openai = createOpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
+  const { text } = await generateText({
+    model: openai("gpt-4o-mini"),
+    system: SYSTEM_PROMPT,
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "file",
+            mediaType: "application/pdf",
+            data: file.buffer.toString("base64"),
+            filename: file.originalname,
+          },
+        ],
+      },
+    ],
+  });
+
+  const resume = JSON.parse(text);
+
   try {
-    const result = await parser.getText({ pageJoiner: "" });
     res.json({
-      name: file.originalname,
-      pages: result.total,
-      text: result.text,
+      message: "Resume parsed successfully",
+      data: {
+        name: file.originalname,
+        resume,
+      },
     });
   } catch (err) {
     console.error("Failed to parse PDF:", err);
