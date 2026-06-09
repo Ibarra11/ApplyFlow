@@ -1,5 +1,5 @@
 import { Terminal as TerminalIcon, Upload } from "lucide-react";
-import { useParseResume } from "./lib/queries/use-parse-resume";
+import { useParseResume } from "./lib/api/mutations/use-parse-resume";
 
 export default function App() {
   const { mutate: parseResume, isPending } = useParseResume();
