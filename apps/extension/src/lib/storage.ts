@@ -1,4 +1,4 @@
-import type { StoredResume } from "./types";
+import { storedResumeSchema, type StoredResume } from "@applyflow/schema";
 
 const CONSTANTS = {
   PARSED_RESUME_KEY: "parsedResume",
@@ -7,7 +7,10 @@ const CONSTANTS = {
 export const storage = {
   getParsedResume: async (): Promise<StoredResume | null> => {
     const result = await chrome.storage.local.get(CONSTANTS.PARSED_RESUME_KEY);
-    return (result[CONSTANTS.PARSED_RESUME_KEY] as StoredResume) ?? null;
+    const parsed = storedResumeSchema.safeParse(
+      result[CONSTANTS.PARSED_RESUME_KEY],
+    );
+    return parsed.success ? parsed.data : null;
   },
   setParsedResume: async (parsedResume: StoredResume): Promise<void> => {
     await chrome.storage.local.set({

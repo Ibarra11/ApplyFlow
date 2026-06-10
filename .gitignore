@@ -1,6 +1,10 @@
 # Dependencies
 node_modules
 
+# pnpm local content-addressable store (created when the global store dir
+# isn't writable, e.g. in a sandbox); should never be committed
+.pnpm-store
+
 # Build outputs
 dist
 build

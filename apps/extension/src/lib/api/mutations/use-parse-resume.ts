@@ -1,30 +1,23 @@
 import { useMutation } from "@tanstack/react-query";
+import { parseResumeResponseSchema, type StoredResume } from "@applyflow/schema";
 import { api } from "@/lib/api/api";
-import type { Resume, StoredResume } from "@/lib/types";
 import { storage } from "../../storage";
 import { queryClient } from "../query-client";
 import { queryKeys } from "../query-keys";
-
-interface ParseResumeResponse {
-  message: string;
-  data: {
-    name: string;
-    resume: Resume;
-  };
-}
 
 async function parseResume(file: File): Promise<StoredResume> {
   const formData = new FormData();
   formData.append("resume", file);
 
-  const { data } = await api.post<ParseResumeResponse>(
-    "/resume/parse",
-    formData,
-  );
+  const { data } = await api.post("/resume/parse", formData);
+
+  // Validate the API response so a malformed payload fails loudly here
+  // rather than surfacing as a confusing render error downstream.
+  const { data: payload } = parseResumeResponseSchema.parse(data);
 
   return {
-    name: data.data.name,
-    resume: data.data.resume,
+    name: payload.name,
+    resume: payload.resume,
     updatedAt: Date.now(),
   };
 }

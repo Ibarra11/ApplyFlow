@@ -62,7 +62,6 @@ function ContactRow({
 }
 
 export function ContactSection({ resume }: { resume: Resume }) {
-  debugger;
   const { mutate, isPending } = useUpdateResume();
 
   const current = useMemo(
