@@ -12,11 +12,15 @@ aiRouter.post(
   "/answer",
   validate({ body: answerQuestionRequestSchema }),
   async (req, res) => {
-    const { question, resume } = req.body;
+    const { question, resume, jobDescription } = req.body;
 
     const openai = new OpenAIService();
 
-    const userContent = `Question:\n${question}\n\nResume:\n${JSON.stringify(resume)}`;
+    const jobSection = jobDescription
+      ? `\n\nJob description:\n${JSON.stringify(jobDescription)}`
+      : "";
+
+    const userContent = `Question:\n${question}\n\nResume:\n${JSON.stringify(resume)}${jobSection}`;
 
     try {
       const { text } = await generateText({

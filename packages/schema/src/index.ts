@@ -55,9 +55,35 @@ export const storedResumeSchema = z.object({
   updatedAt: z.number(),
 });
 
+export const jobDescriptionSchema = z.object({
+  title: z.string().nullable(),
+  company: z.string().nullable(),
+  location: z.string().nullable(),
+  employmentType: z.string().nullable(),
+  summary: z.string().nullable(),
+  responsibilities: z.array(z.string()),
+  requirements: z.array(z.string()),
+  niceToHave: z.array(z.string()),
+  skills: z.array(z.string()),
+});
+
+export const parseJobRequestSchema = z.object({
+  text: z.string().min(1).max(20000),
+});
+
+export const parseJobResponseSchema = z.object({
+  jobDescription: jobDescriptionSchema,
+});
+
+export const storedJobSchema = z.object({
+  jobDescription: jobDescriptionSchema,
+  updatedAt: z.number(),
+});
+
 export const answerQuestionRequestSchema = z.object({
   question: z.string().min(1).max(2000),
   resume: resumeSchema,
+  jobDescription: jobDescriptionSchema.nullable().optional(),
 });
 
 export const answerQuestionResponseSchema = z.object({
@@ -74,6 +100,10 @@ export type ResumeSkills = z.infer<typeof resumeSkillsSchema>;
 export type Resume = z.infer<typeof resumeSchema>;
 export type ParseResumeResponse = z.infer<typeof parseResumeResponseSchema>;
 export type StoredResume = z.infer<typeof storedResumeSchema>;
+export type JobDescription = z.infer<typeof jobDescriptionSchema>;
+export type ParseJobRequest = z.infer<typeof parseJobRequestSchema>;
+export type ParseJobResponse = z.infer<typeof parseJobResponseSchema>;
+export type StoredJob = z.infer<typeof storedJobSchema>;
 export type ResumeSkillCategory = keyof ResumeSkills;
 
 export const SKILL_CATEGORIES: { key: ResumeSkillCategory; label: string }[] = [
