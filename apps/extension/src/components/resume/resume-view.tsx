@@ -77,28 +77,30 @@ export function ResumeView({ stored }: { stored: StoredResume }) {
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-10 border-b-2 border-neutral-900 bg-yellow-50/95 px-4 py-3 backdrop-blur">
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 border-2 border-neutral-900 bg-lime-300 px-2.5 py-1">
             <Terminal className="size-3.5 shrink-0 stroke-neutral-900" />
             <p className="font-mono text-xs font-bold tracking-wide uppercase">
               ApplyFlow
             </p>
           </div>
-          <ReparseControl />
-        </div>
-        <div className="mt-2 flex items-center justify-between gap-2">
-          <p className="min-w-0 truncate text-xs font-medium text-neutral-600">
-            {stored.name}
-          </p>
-          <p className="shrink-0 font-mono text-[0.625rem] tracking-wide text-neutral-500 uppercase tabular-nums">
-            Updated {formatUpdated(stored.updatedAt)}
-          </p>
         </div>
         <ViewToggle view={view} onChange={setView} />
       </header>
 
       <div className={cn(view !== "resume" && "hidden")}>
         <div className="flex flex-col gap-4 p-4">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex min-w-0 flex-col gap-1">
+              <p className="min-w-0 truncate text-xs font-medium text-neutral-600">
+                {stored.name}
+              </p>
+              <p className="font-mono text-[0.625rem] tracking-wide text-neutral-500 uppercase tabular-nums">
+                Updated {formatUpdated(stored.updatedAt)}
+              </p>
+            </div>
+            <ReparseControl />
+          </div>
           <ContactSection resume={resume} />
           <SummarySection resume={resume} />
           <ExperienceSection resume={resume} />
