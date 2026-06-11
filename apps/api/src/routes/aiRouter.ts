@@ -12,7 +12,6 @@ aiRouter.post(
   "/answer",
   validate({ body: answerQuestionRequestSchema }),
   async (req, res) => {
-    debugger;
     const { question, resume } = req.body;
 
     const openai = new OpenAIService();
