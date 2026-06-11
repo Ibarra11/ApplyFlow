@@ -77,10 +77,10 @@ export function ResumeView({ stored }: { stored: StoredResume }) {
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-10 border-b-2 border-neutral-900 bg-yellow-50/95 px-4 py-3 backdrop-blur">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 border-2 border-neutral-900 bg-lime-300 px-2.5 py-1">
-            <Terminal className="size-3.5 shrink-0 stroke-neutral-900" />
-            <p className="font-mono text-xs font-bold tracking-wide uppercase">
+        <div className="flex items-center">
+          <div className="flex items-center gap-2 border-2 border-neutral-900 bg-neutral-900 px-3 py-1.5 shadow-[4px_4px_0_0_#bef264]">
+            <Terminal className="size-4 shrink-0 stroke-lime-300" />
+            <p className="font-mono text-sm font-bold tracking-wide text-lime-300 uppercase">
               ApplyFlow
             </p>
           </div>
