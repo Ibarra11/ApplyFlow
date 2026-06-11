@@ -4,6 +4,7 @@ import { Terminal } from "lucide-react";
 import type { StoredResume } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { AskAi } from "./ask-ai";
+import { JobMatch } from "./job-match";
 import { ContactSection } from "./contact-section";
 import { EducationSection } from "./education-section";
 import { ExperienceSection } from "./experience-section";
@@ -11,7 +12,7 @@ import { ReparseControl } from "./reparse-control";
 import { SkillsSection } from "./skills-section";
 import { SummarySection } from "./summary-section";
 
-type View = "resume" | "ask";
+type View = "resume" | "ask" | "match";
 
 function formatUpdated(timestamp: number) {
   return new Date(timestamp).toLocaleString(undefined, {
@@ -25,7 +26,14 @@ function formatUpdated(timestamp: number) {
 const viewTabs = [
   { id: "resume" as const, label: "Resume" },
   { id: "ask" as const, label: "Ask AI" },
+  { id: "match" as const, label: "Match" },
 ] as const;
+
+const activeTabColors: Record<View, string> = {
+  resume: "bg-lime-300 text-neutral-900",
+  ask: "bg-violet-300 text-neutral-900",
+  match: "bg-sky-300 text-neutral-900",
+};
 
 function ViewToggle({
   view,
@@ -49,11 +57,9 @@ function ViewToggle({
           onClick={() => onChange(id)}
           className={cn(
             "flex-1 px-3 py-1.5 font-mono text-[0.6875rem] font-bold tracking-wide uppercase transition-colors focus-visible:outline-2 focus-visible:-outline-offset-1 focus-visible:outline-violet-600",
-            index === 0 && "border-r-2 border-neutral-900",
+            index < viewTabs.length - 1 && "border-r-2 border-neutral-900",
             view === id
-              ? id === "resume"
-                ? "bg-lime-300 text-neutral-900"
-                : "bg-violet-300 text-neutral-900"
+              ? activeTabColors[id]
               : "bg-white text-neutral-600 hover:bg-neutral-50",
           )}
         >
@@ -103,6 +109,10 @@ export function ResumeView({ stored }: { stored: StoredResume }) {
 
       <div className={cn(view !== "ask" && "hidden")}>
         <AskAi resume={resume} />
+      </div>
+
+      <div className={cn(view !== "match" && "hidden")}>
+        <JobMatch resume={resume} />
       </div>
     </div>
   );

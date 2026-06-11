@@ -89,6 +89,24 @@ export const answerQuestionRequestSchema = z.object({
 export const answerQuestionResponseSchema = z.object({
   answer: z.string(),
 });
+
+export const jobMatchResultSchema = z.object({
+  score: z.number().min(0).max(10),
+  summary: z.string(),
+  strengths: z.array(z.string()),
+  missingSkills: z.array(z.string()),
+  experienceGaps: z.array(z.string()),
+});
+
+export const jobMatchRequestSchema = z.object({
+  resume: resumeSchema,
+  jobDescription: jobDescriptionSchema,
+});
+
+export const jobMatchResponseSchema = z.object({
+  match: jobMatchResultSchema,
+});
+
 export type AnswerQuestionRequest = z.infer<typeof answerQuestionRequestSchema>;
 export type AnswerQuestionResponse = z.infer<
   typeof answerQuestionResponseSchema
@@ -104,6 +122,9 @@ export type JobDescription = z.infer<typeof jobDescriptionSchema>;
 export type ParseJobRequest = z.infer<typeof parseJobRequestSchema>;
 export type ParseJobResponse = z.infer<typeof parseJobResponseSchema>;
 export type StoredJob = z.infer<typeof storedJobSchema>;
+export type JobMatchResult = z.infer<typeof jobMatchResultSchema>;
+export type JobMatchRequest = z.infer<typeof jobMatchRequestSchema>;
+export type JobMatchResponse = z.infer<typeof jobMatchResponseSchema>;
 export type ResumeSkillCategory = keyof ResumeSkills;
 
 export const SKILL_CATEGORIES: { key: ResumeSkillCategory; label: string }[] = [
