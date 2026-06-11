@@ -1,5 +1,10 @@
 import type { Suggestion } from "./suggestions";
 
+export type DropdownAction = {
+  label: string;
+  onRun: () => void;
+};
+
 const STYLE = `
 :host { all: initial; }
 .af-panel {
@@ -29,6 +34,25 @@ const STYLE = `
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: #6b7280;
+}
+.af-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #2563eb;
+}
+.af-action:hover,
+.af-action.af-active {
+  background: #eff6ff;
+}
+.af-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.05);
+  margin: 2px 6px;
 }
 .af-item {
   display: flex;
@@ -68,6 +92,17 @@ const STYLE = `
   border-radius: 4px;
   padding: 1px 5px;
 }
+.af-busy {
+  padding: 12px 10px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 12px;
+}
+.af-error {
+  padding: 10px;
+  color: #dc2626;
+  font-size: 12px;
+}
 .af-footer {
   padding: 5px 10px 4px;
   font-size: 10px;
@@ -82,6 +117,9 @@ export class SuggestionDropdown {
   private root: ShadowRoot;
   private panel: HTMLDivElement;
   private items: Suggestion[] = [];
+  private action: DropdownAction | null = null;
+  private busyMessage: string | null = null;
+  private errorMessage: string | null = null;
   private activeIndex = 0;
   private onPick: ((s: Suggestion) => void) | null = null;
   private anchor: HTMLElement | null = null;
@@ -115,24 +153,28 @@ export class SuggestionDropdown {
     items: Suggestion[],
     anchor: HTMLElement,
     onPick: (s: Suggestion) => void,
+    action?: DropdownAction | null,
   ): void {
     this.items = items;
     this.anchor = anchor;
     this.onPick = onPick;
-    this.activeIndex = 0;
+    this.action = action ?? null;
+    this.busyMessage = null;
+    this.errorMessage = null;
+    this.activeIndex = this.action && items.length > 0 ? 1 : 0;
     this.render();
     this.panel.style.display = "block";
     this.position();
   }
 
   update(items: Suggestion[]): void {
-    if (!this.isOpen) return;
+    if (!this.isOpen || this.busyMessage) return;
     this.items = items;
-    if (items.length === 0) {
+    if (items.length === 0 && !this.action) {
       this.close();
       return;
     }
-    this.activeIndex = Math.min(this.activeIndex, items.length - 1);
+    this.activeIndex = Math.min(this.activeIndex, this.rowCount() - 1);
     this.render();
     this.position();
   }
@@ -140,20 +182,49 @@ export class SuggestionDropdown {
   close(): void {
     this.panel.style.display = "none";
     this.items = [];
+    this.action = null;
+    this.busyMessage = null;
+    this.errorMessage = null;
     this.anchor = null;
     this.onPick = null;
   }
 
+  setBusy(message: string | null): void {
+    this.busyMessage = message;
+    this.errorMessage = null;
+    if (this.isOpen) {
+      this.render();
+      this.position();
+    }
+  }
+
+  setError(message: string | null): void {
+    this.busyMessage = null;
+    this.errorMessage = message;
+    if (this.isOpen) {
+      this.render();
+      this.position();
+    }
+  }
+
   move(delta: number): void {
-    if (!this.isOpen || this.items.length === 0) return;
-    const count = this.items.length;
+    if (!this.isOpen || this.busyMessage || this.errorMessage) return;
+    const count = this.rowCount();
+    if (count === 0) return;
     this.activeIndex = (this.activeIndex + delta + count) % count;
     this.render();
   }
 
   confirmActive(): boolean {
-    if (!this.isOpen) return false;
-    const item = this.items[this.activeIndex];
+    if (!this.isOpen || this.busyMessage || this.errorMessage) return false;
+
+    if (this.action && this.activeIndex === 0) {
+      this.action.onRun();
+      return true;
+    }
+
+    const itemIndex = this.action ? this.activeIndex - 1 : this.activeIndex;
+    const item = this.items[itemIndex];
     if (item && this.onPick) {
       this.onPick(item);
       this.close();
@@ -180,6 +251,10 @@ export class SuggestionDropdown {
     this.panel.style.left = `${Math.max(rect.left, 4)}px`;
   }
 
+  private rowCount(): number {
+    return (this.action ? 1 : 0) + this.items.length;
+  }
+
   private render(): void {
     this.panel.replaceChildren();
 
@@ -188,9 +263,48 @@ export class SuggestionDropdown {
     header.textContent = "ApplyFlow suggestions";
     this.panel.appendChild(header);
 
+    if (this.busyMessage) {
+      const busy = document.createElement("div");
+      busy.className = "af-busy";
+      busy.textContent = this.busyMessage;
+      this.panel.appendChild(busy);
+      return;
+    }
+
+    if (this.errorMessage) {
+      const error = document.createElement("div");
+      error.className = "af-error";
+      error.textContent = this.errorMessage;
+      this.panel.appendChild(error);
+      return;
+    }
+
+    if (this.action) {
+      const actionEl = document.createElement("div");
+      actionEl.className =
+        "af-action" + (this.activeIndex === 0 ? " af-active" : "");
+      actionEl.textContent = this.action.label;
+      actionEl.addEventListener("mouseenter", () => {
+        this.activeIndex = 0;
+        this.render();
+      });
+      actionEl.addEventListener("click", () => {
+        this.action?.onRun();
+      });
+      this.panel.appendChild(actionEl);
+
+      if (this.items.length > 0) {
+        const divider = document.createElement("div");
+        divider.className = "af-divider";
+        this.panel.appendChild(divider);
+      }
+    }
+
     this.items.forEach((item, index) => {
+      const rowIndex = this.action ? index + 1 : index;
       const el = document.createElement("div");
-      el.className = "af-item" + (index === this.activeIndex ? " af-active" : "");
+      el.className =
+        "af-item" + (rowIndex === this.activeIndex ? " af-active" : "");
 
       const top = document.createElement("div");
       top.className = "af-item-top";
@@ -214,7 +328,7 @@ export class SuggestionDropdown {
       el.appendChild(label);
 
       el.addEventListener("mouseenter", () => {
-        this.activeIndex = index;
+        this.activeIndex = rowIndex;
         this.render();
       });
       el.addEventListener("click", () => {

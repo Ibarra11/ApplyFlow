@@ -1,7 +1,12 @@
 import type { Resume } from "@applyflow/schema";
 import { PARSED_RESUME_KEY, storage } from "@/lib/storage";
-import { SuggestionDropdown } from "./dropdown";
-import { isFillableElement, type FillableElement } from "./field-detector";
+import { fetchAnswer } from "./answer-question";
+import { type DropdownAction, SuggestionDropdown } from "./dropdown";
+import {
+  extractQuestion,
+  isFillableElement,
+  type FillableElement,
+} from "./field-detector";
 import {
   filterSuggestions,
   suggestionsForInput,
@@ -43,10 +48,47 @@ function fillField(el: FillableElement, value: string): void {
   el.focus();
 }
 
+function askAiAction(el: FillableElement): DropdownAction {
+  return {
+    label: "Ask AI to answer this",
+    onRun: () => void runAskAi(el),
+  };
+}
+
+async function runAskAi(el: FillableElement): Promise<void> {
+  if (!resume) return;
+
+  const question = extractQuestion(el);
+  if (!question) {
+    dropdown.setError("Could not find a question for this field");
+    return;
+  }
+
+  dropdown.setBusy("Generating answer…");
+  try {
+    const answer = await fetchAnswer(question, resume);
+    fillField(el, answer);
+    dropdown.close();
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Could not generate an answer";
+    dropdown.setError(message);
+  }
+}
+
+function openDropdown(el: FillableElement, filtered: Suggestion[]): void {
+  dropdown.open(
+    filtered,
+    el,
+    (s) => fillField(el, s.value),
+    askAiAction(el),
+  );
+}
+
 function showFor(el: FillableElement): void {
   if (!resume) return;
   debugger;
-  const all = suggestionsForInput(el, resume);
+  const all = suggestionsForInput(resume);
   if (all.length === 0) {
     activeField = null;
     dropdown.close();
@@ -55,13 +97,7 @@ function showFor(el: FillableElement): void {
   activeField = el;
   activeSuggestions = all;
   const filtered = filterSuggestions(all, el.value);
-  if (filtered.length === 0) {
-    dropdown.close();
-    return;
-  }
-  dropdown.open(filtered, el, (s) => {
-    fillField(el, s.value);
-  });
+  openDropdown(el, filtered);
 }
 
 document.addEventListener(
@@ -82,12 +118,10 @@ document.addEventListener(
     const target = e.target;
     if (target !== activeField || !isFillableElement(target)) return;
     const filtered = filterSuggestions(activeSuggestions, target.value);
-    if (filtered.length === 0) {
-      dropdown.close();
-    } else if (dropdown.isOpen) {
+    if (dropdown.isOpen) {
       dropdown.update(filtered);
     } else {
-      dropdown.open(filtered, target, (s) => fillField(target, s.value));
+      openDropdown(target, filtered);
     }
   },
   true,

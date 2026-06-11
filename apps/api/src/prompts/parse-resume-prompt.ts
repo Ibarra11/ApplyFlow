@@ -1,4 +1,4 @@
-export const SYSTEM_PROMPT = `
+export const PARSE_RESUME_PROMPT = `
 You are a resume parsing assistant.
 
 Your task is to extract structured information from the provided resume.

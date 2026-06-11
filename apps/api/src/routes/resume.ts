@@ -1,12 +1,12 @@
 import { Router } from "express";
 import multer from "multer";
 import { generateText, Output } from "ai";
-import { createOpenAI } from "@ai-sdk/openai";
 import { resumeSchema } from "@applyflow/schema";
 
-import { SYSTEM_PROMPT } from "../ai/system-prompt";
 import { validate } from "../middleware/validate";
 import { resumeUploadSchema } from "../schema/resume-upload";
+import OpenAIService from "../lib/openai";
+import { PARSE_RESUME_PROMPT } from "../prompts/parse-resume-prompt";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -20,20 +20,17 @@ resumeRouter.post(
   upload.single("resume"),
   validate({ file: resumeUploadSchema }),
   async (req, res) => {
-    // Guaranteed present and valid by the `validate` middleware above.
     const file = req.file!;
 
-    const openai = createOpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    const openai = new OpenAIService();
 
     try {
       const { text } = await generateText({
-        model: openai("gpt-4o-mini"),
+        model: openai.getModel(),
         output: Output.object({
           schema: resumeSchema,
         }),
-        system: SYSTEM_PROMPT,
+        system: PARSE_RESUME_PROMPT,
         messages: [
           {
             role: "user",

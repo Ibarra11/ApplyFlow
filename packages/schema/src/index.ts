@@ -55,6 +55,19 @@ export const storedResumeSchema = z.object({
   updatedAt: z.number(),
 });
 
+export const answerQuestionRequestSchema = z.object({
+  question: z.string().min(1).max(2000),
+  resume: resumeSchema,
+});
+
+export const answerQuestionResponseSchema = z.object({
+  answer: z.string(),
+});
+export type AnswerQuestionRequest = z.infer<typeof answerQuestionRequestSchema>;
+export type AnswerQuestionResponse = z.infer<
+  typeof answerQuestionResponseSchema
+>;
+
 export type ResumeJob = z.infer<typeof resumeJobSchema>;
 export type ResumeEducation = z.infer<typeof resumeEducationSchema>;
 export type ResumeSkills = z.infer<typeof resumeSkillsSchema>;
