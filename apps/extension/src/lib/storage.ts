@@ -1,7 +1,9 @@
 import { storedResumeSchema, type StoredResume } from "@applyflow/schema";
 
+export const PARSED_RESUME_KEY = "parsedResume";
+
 const CONSTANTS = {
-  PARSED_RESUME_KEY: "parsedResume",
+  PARSED_RESUME_KEY,
 } as const;
 
 export const storage = {
