@@ -1,6 +1,16 @@
 # ApplyFlow
 
-ApplyFlow is a browser extension that helps you manage and speed up job applications. Upload your resume (PDF) once, and ApplyFlow keeps it handy in a persistent side panel while you browse job sites — laying the groundwork for parsing, autofill, and job matching.
+ApplyFlow is a browser extension that helps you manage and speed up job applications. Upload your resume (PDF) once, and ApplyFlow keeps it handy in a persistent side panel while you browse job sites — parsing your resume, matching it against job postings, and answering application questions with AI.
+
+## Screenshots
+
+| Resume | Ask AI | Match |
+| --- | --- | --- |
+| ![Resume view](docs/screenshots/resume.png) | ![Ask AI view](docs/screenshots/ask-ai.png) | ![Match view](docs/screenshots/match.png) |
+
+- **Resume** — parsed resume broken into editable, copyable sections (contact, summary, experience, …).
+- **Ask AI** — paste a job description, parse it, and generate tailored answers to application questions.
+- **Match** — score your resume against a posting, with strengths and missing skills.
 
 ## Status
 
@@ -83,18 +93,6 @@ pnpm dev
 | `pnpm dev:extension` | Run the extension dev server (CRXJS) |
 | `pnpm dev:api` | Run the API dev server |
 | `pnpm --filter applyflow-extension build` | Production build of the extension |
-
-## Roadmap
-
-- [x] Extension scaffold (MV3 + Vite + CRXJS)
-- [x] Side panel UI
-- [x] Tailwind + shadcn/ui setup
-- [x] PDF upload UI
-- [ ] Resume parsing (client- or server-side)
-- [ ] API endpoint for resume processing
-- [ ] Shared Zod schemas for parsed resume data
-- [ ] Autofill on job application sites (content scripts)
-- [ ] Job matching
 
 ## Browser support
 
