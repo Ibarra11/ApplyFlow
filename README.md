@@ -8,7 +8,7 @@ ApplyFlow is a browser extension that helps you manage and speed up job applicat
 | --- | --- | --- |
 | ![Resume view](docs/screenshots/resume.png) | ![Ask AI view](docs/screenshots/ask-ai.png) | ![Match view](docs/screenshots/match.png) |
 
-- **Resume** — parsed resume broken into editable, copyable sections (contact, summary, experience, …).
+- **Resume** — parsed resume broken into editable, copyable sections (contact, experience, projects, …).
 - **Ask AI** — paste a job description, parse it, and generate tailored answers to application questions.
 - **Match** — score your resume against a posting, with strengths and missing skills.
 

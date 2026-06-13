@@ -8,9 +8,9 @@ import { JobMatch } from "./job-match";
 import { ContactSection } from "./contact-section";
 import { EducationSection } from "./education-section";
 import { ExperienceSection } from "./experience-section";
+import { ProjectsSection } from "./projects-section";
 import { ReparseControl } from "./reparse-control";
 import { SkillsSection } from "./skills-section";
-import { SummarySection } from "./summary-section";
 
 type View = "resume" | "ask" | "match";
 
@@ -102,8 +102,8 @@ export function ResumeView({ stored }: { stored: StoredResume }) {
             <ReparseControl />
           </div>
           <ContactSection resume={resume} />
-          <SummarySection resume={resume} />
           <ExperienceSection resume={resume} />
+          <ProjectsSection resume={resume} />
           <EducationSection resume={resume} />
           <SkillsSection resume={resume} />
         </div>

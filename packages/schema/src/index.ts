@@ -17,6 +17,12 @@ export const resumeEducationSchema = z.object({
   details: z.array(z.string()).nullable(),
 });
 
+export const resumeProjectSchema = z.object({
+  name: z.string().nullable(),
+  url: z.string().nullable(),
+  details: z.array(z.string()),
+});
+
 export const resumeSkillsSchema = z.object({
   languages: z.array(z.string()),
   frontend: z.array(z.string()),
@@ -35,8 +41,8 @@ export const resumeSchema = z.object({
   linkedin: z.string().nullable(),
   github: z.string().nullable(),
   website: z.string().nullable(),
-  summary: z.string().nullable(),
   jobs: z.array(resumeJobSchema),
+  projects: z.array(resumeProjectSchema),
   education: z.array(resumeEducationSchema),
   skills: resumeSkillsSchema,
 });
@@ -113,6 +119,7 @@ export type AnswerQuestionResponse = z.infer<
 >;
 
 export type ResumeJob = z.infer<typeof resumeJobSchema>;
+export type ResumeProject = z.infer<typeof resumeProjectSchema>;
 export type ResumeEducation = z.infer<typeof resumeEducationSchema>;
 export type ResumeSkills = z.infer<typeof resumeSkillsSchema>;
 export type Resume = z.infer<typeof resumeSchema>;

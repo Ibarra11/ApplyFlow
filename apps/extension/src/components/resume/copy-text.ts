@@ -2,6 +2,7 @@ import type {
   Resume,
   ResumeEducation,
   ResumeJob,
+  ResumeProject,
   ResumeSkills,
 } from "@/lib/types";
 import { SKILL_CATEGORIES } from "@/lib/types";
@@ -49,6 +50,17 @@ export function jobText(job: ResumeJob): string {
 
 export function experienceText(jobs: ResumeJob[]): string {
   return jobs.map(jobText).join("\n\n");
+}
+
+export function projectText(project: ResumeProject): string {
+  const heading = joinTruthy([project.name, project.url], " — ");
+  const lines = [heading].filter(Boolean);
+  for (const detail of project.details) lines.push(`• ${detail}`);
+  return lines.join("\n");
+}
+
+export function projectsText(projects: ResumeProject[]): string {
+  return projects.map(projectText).join("\n\n");
 }
 
 export function educationText(items: ResumeEducation[]): string {
