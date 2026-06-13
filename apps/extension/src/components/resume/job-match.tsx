@@ -90,8 +90,8 @@ export function JobMatch({ resume }: { resume: Resume }) {
     return (
       <div className="p-4">
         <p className="text-sm text-neutral-600">
-          No job description parsed yet. Go to the Ask AI tab, paste a job
-          posting, and parse it first.
+          No job description parsed yet. Go to the Job tab, grab the posting from
+          the page, and parse it first.
         </p>
       </div>
     );

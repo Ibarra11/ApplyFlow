@@ -5,6 +5,7 @@ import type { StoredResume } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { AskAi } from "./ask-ai";
 import { JobMatch } from "./job-match";
+import { JobView } from "./job-view";
 import { ContactSection } from "./contact-section";
 import { EducationSection } from "./education-section";
 import { ExperienceSection } from "./experience-section";
@@ -12,7 +13,7 @@ import { ProjectsSection } from "./projects-section";
 import { ReparseControl } from "./reparse-control";
 import { SkillsSection } from "./skills-section";
 
-type View = "resume" | "ask" | "match";
+type View = "resume" | "job" | "ask" | "match";
 
 function formatUpdated(timestamp: number) {
   return new Date(timestamp).toLocaleString(undefined, {
@@ -25,12 +26,14 @@ function formatUpdated(timestamp: number) {
 
 const viewTabs = [
   { id: "resume" as const, label: "Resume" },
+  { id: "job" as const, label: "Job" },
   { id: "ask" as const, label: "Ask AI" },
   { id: "match" as const, label: "Match" },
 ] as const;
 
 const activeTabColors: Record<View, string> = {
   resume: "bg-lime-300 text-neutral-900",
+  job: "bg-amber-300 text-neutral-900",
   ask: "bg-violet-300 text-neutral-900",
   match: "bg-sky-300 text-neutral-900",
 };
@@ -107,6 +110,10 @@ export function ResumeView({ stored }: { stored: StoredResume }) {
           <EducationSection resume={resume} />
           <SkillsSection resume={resume} />
         </div>
+      </div>
+
+      <div className={cn(view !== "job" && "hidden")}>
+        <JobView />
       </div>
 
       <div className={cn(view !== "ask" && "hidden")}>

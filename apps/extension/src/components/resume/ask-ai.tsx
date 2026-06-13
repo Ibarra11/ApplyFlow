@@ -6,7 +6,6 @@ import { useParsedJob } from "@/lib/api/queries/use-parsed-job";
 import type { Resume } from "@/lib/types";
 import { TextArea } from "./controls";
 import { CopyButton } from "./copy";
-import { JobSection } from "./job-section";
 import { SectionCard } from "./section-card";
 
 
@@ -20,8 +19,6 @@ export function AskAi({ resume }: { resume: Resume }) {
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      <JobSection />
-
       <fieldset disabled={isPending}>
       <form
         className="flex flex-col gap-3"
