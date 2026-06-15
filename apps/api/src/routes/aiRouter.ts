@@ -8,7 +8,7 @@ import { generateText, Output } from "ai";
 
 import OpenAIService from "../lib/openai";
 import { validate } from "../middleware/validate";
-import { ANSWER_QUESTION_PROMPT } from "../prompts/answer-question-prompt";
+import { buildAnswerQuestionPrompt } from "../prompts/answer-question-prompt";
 import { MATCH_JOB_PROMPT } from "../prompts/match-job-prompt";
 
 export const aiRouter = Router();
@@ -27,10 +27,16 @@ aiRouter.post(
 
     const userContent = `Question:\n${question}\n\nResume:\n${JSON.stringify(resume)}${jobSection}`;
 
+    const currentDate = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
     try {
       const { text } = await generateText({
         model: openai.getModel(),
-        system: ANSWER_QUESTION_PROMPT,
+        system: buildAnswerQuestionPrompt(currentDate),
         messages: [{ role: "user", content: userContent }],
       });
 
