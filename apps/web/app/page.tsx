@@ -1,16 +1,42 @@
 "use client";
 
 import {
+  APPLICATION_STATUSES,
+  type Application,
+  type ApplicationStatus,
+} from "@applyflow/schema";
+import {
   Building2,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
   Loader2,
+  Trash2,
 } from "lucide-react";
 import { useState } from "react";
 
-import { PAGE_SIZE, useApplications } from "@/lib/use-applications";
-import type { Application } from "@applyflow/schema";
+import {
+  PAGE_SIZE,
+  useApplications,
+  type StatusFilter,
+} from "@/lib/use-applications";
+import { useDeleteApplication } from "@/lib/use-delete-application";
+import { useUpdateApplicationStatus } from "@/lib/use-update-application-status";
+
+const statusLabels: Record<ApplicationStatus, string> = {
+  pending: "Pending",
+  interviewing: "Interviewing",
+  offer: "Offer",
+  rejected: "Rejected",
+};
+
+const statusStyles: Record<ApplicationStatus, string> = {
+  pending: "bg-amber-300",
+  interviewing: "bg-sky-300",
+  offer: "bg-lime-300",
+  rejected: "bg-red-300",
+};
 
 function formatAppliedDate(iso: string) {
   return new Date(iso).toLocaleDateString(undefined, {
@@ -23,6 +49,16 @@ function formatAppliedDate(iso: string) {
 
 function ApplicationCard({ application }: { application: Application }) {
   const title = application.title ?? "Untitled role";
+  const { mutate, isPending } = useUpdateApplicationStatus();
+  const { mutate: deleteApplication, isPending: isDeleting } =
+    useDeleteApplication();
+
+  function handleDelete() {
+    const label = application.company ? `${title} at ${application.company}` : title;
+    if (window.confirm(`Delete "${label}"? This can't be undone.`)) {
+      deleteApplication(application.id);
+    }
+  }
 
   return (
     <li className="flex items-start justify-between gap-4 border-2 border-neutral-900 bg-white p-4 shadow-[5px_5px_0_0_#171717]">
@@ -38,15 +74,61 @@ function ApplicationCard({ application }: { application: Application }) {
           Applied {formatAppliedDate(application.dateApplied)}
         </p>
       </div>
-      <a
-        href={application.url}
-        target="_blank"
-        rel="noreferrer"
-        className="inline-flex shrink-0 items-center gap-1.5 border-2 border-neutral-900 bg-amber-300 px-3 py-1.5 font-mono text-xs font-bold tracking-wide text-neutral-900 uppercase shadow-[3px_3px_0_0_#171717] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0_0_#171717] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_#171717] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
-      >
-        <ExternalLink className="size-3.5" />
-        Open
-      </a>
+
+      <div className="flex shrink-0 flex-col items-end gap-2">
+        <div className="relative">
+          <select
+            aria-label="Application status"
+            disabled={isPending}
+            value={application.status}
+            onChange={(e) =>
+              mutate({
+                id: application.id,
+                status: e.target.value as ApplicationStatus,
+              })
+            }
+            className={`appearance-none border-2 border-neutral-900 py-1.5 pr-8 pl-3 font-mono text-xs font-bold tracking-wide text-neutral-900 uppercase shadow-[3px_3px_0_0_#171717] transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 disabled:cursor-not-allowed disabled:opacity-60 ${statusStyles[application.status]}`}
+          >
+            {APPLICATION_STATUSES.map((status) => (
+              <option key={status} value={status}>
+                {statusLabels[status]}
+              </option>
+            ))}
+          </select>
+          {isPending ? (
+            <Loader2 className="pointer-events-none absolute top-1/2 right-2 size-3.5 -translate-y-1/2 animate-spin text-neutral-900" />
+          ) : (
+            <ChevronDown className="pointer-events-none absolute top-1/2 right-2 size-3.5 -translate-y-1/2 text-neutral-900" />
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            aria-label="Delete application"
+            title="Delete application"
+            className="inline-flex items-center gap-1.5 border-2 border-neutral-900 bg-white p-1.5 text-neutral-900 shadow-[3px_3px_0_0_#171717] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-red-200 hover:shadow-[5px_5px_0_0_#171717] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_#171717] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isDeleting ? (
+              <Loader2 className="size-3.5 animate-spin" />
+            ) : (
+              <Trash2 className="size-3.5" />
+            )}
+          </button>
+
+          <a
+            href={application.url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 border-2 border-neutral-900 bg-white px-3 py-1.5 font-mono text-xs font-bold tracking-wide text-neutral-900 uppercase shadow-[3px_3px_0_0_#171717] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-amber-100 hover:shadow-[5px_5px_0_0_#171717] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_#171717] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
+          >
+            <ExternalLink className="size-3.5" />
+            Open
+          </a>
+        </div>
+      </div>
     </li>
   );
 }
@@ -54,12 +136,54 @@ function ApplicationCard({ application }: { application: Application }) {
 const pagerButton =
   "inline-flex items-center gap-1 border-2 border-neutral-900 bg-white px-4 py-2 font-mono text-sm font-bold tracking-wide text-neutral-900 uppercase shadow-[4px_4px_0_0_#171717] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#171717] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_#171717] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0_0_#171717]";
 
+const filters: { id: StatusFilter; label: string }[] = [
+  { id: "all", label: "All" },
+  ...APPLICATION_STATUSES.map((status) => ({
+    id: status,
+    label: statusLabels[status],
+  })),
+];
+
+function FilterBar({
+  value,
+  onChange,
+}: {
+  value: StatusFilter;
+  onChange: (value: StatusFilter) => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {filters.map((filter) => (
+        <button
+          key={filter.id}
+          type="button"
+          onClick={() => onChange(filter.id)}
+          className={`border-2 border-neutral-900 px-3 py-1 font-mono text-xs font-bold tracking-wide uppercase transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 ${
+            value === filter.id
+              ? "bg-neutral-900 text-yellow-50"
+              : "bg-white text-neutral-700 hover:bg-neutral-100"
+          }`}
+        >
+          {filter.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function Home() {
   const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState<StatusFilter>("all");
   const { data, isLoading, isError, isPlaceholderData } = useApplications(
     page,
+    filter,
     PAGE_SIZE,
   );
+
+  function handleFilterChange(value: StatusFilter) {
+    setFilter(value);
+    setPage(1);
+  }
 
   const applications = data?.applications ?? [];
   const totalPages = data?.totalPages ?? 1;
@@ -81,6 +205,8 @@ export default function Home() {
         </p>
       </header>
 
+      <FilterBar value={filter} onChange={handleFilterChange} />
+
       {isLoading ? (
         <div className="flex items-center justify-center gap-2 py-20 text-sm text-neutral-600">
           <Loader2 className="size-5 animate-spin" />
@@ -96,8 +222,9 @@ export default function Home() {
       ) : total === 0 ? (
         <div className="border-2 border-dashed border-neutral-400 bg-white/60 p-10 text-center">
           <p className="text-sm text-neutral-600">
-            No applications yet. Apply to a job from the extension and
-            it&apos;ll show up here.
+            {filter === "all"
+              ? "No applications yet. Apply to a job from the extension and it'll show up here."
+              : `No ${statusLabels[filter]} applications.`}
           </p>
         </div>
       ) : (

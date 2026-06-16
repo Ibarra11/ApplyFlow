@@ -87,11 +87,21 @@ export const storedJobSchema = z.object({
   updatedAt: z.number(),
 });
 
+export const applicationStatusSchema = z.enum([
+  "pending",
+  "interviewing",
+  "offer",
+  "rejected",
+]);
+
+export const APPLICATION_STATUSES = applicationStatusSchema.options;
+
 export const applicationSchema = z.object({
   id: z.string().uuid(),
   url: z.string().url(),
   title: z.string().nullable(),
   company: z.string().nullable(),
+  status: applicationStatusSchema,
   dateApplied: z.string(),
   createdAt: z.string(),
 });
@@ -100,6 +110,14 @@ export const createApplicationRequestSchema = z.object({
   url: z.string().url(),
   title: z.string().nullable(),
   company: z.string().nullable(),
+});
+
+export const updateApplicationStatusRequestSchema = z.object({
+  status: applicationStatusSchema,
+});
+
+export const applicationIdParamsSchema = z.object({
+  id: z.string().uuid(),
 });
 
 export const applicationResponseSchema = z.object({
@@ -117,6 +135,7 @@ export const applicationsResponseSchema = z.object({
 export const applicationsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(100).default(10),
+  status: applicationStatusSchema.optional(),
 });
 
 export const paginatedApplicationsResponseSchema = z.object({
@@ -175,9 +194,14 @@ export type ParseJobRequest = z.infer<typeof parseJobRequestSchema>;
 export type ParseJobResponse = z.infer<typeof parseJobResponseSchema>;
 export type StoredJob = z.infer<typeof storedJobSchema>;
 export type Application = z.infer<typeof applicationSchema>;
+export type ApplicationStatus = z.infer<typeof applicationStatusSchema>;
 export type CreateApplicationRequest = z.infer<
   typeof createApplicationRequestSchema
 >;
+export type UpdateApplicationStatusRequest = z.infer<
+  typeof updateApplicationStatusRequestSchema
+>;
+export type ApplicationIdParams = z.infer<typeof applicationIdParamsSchema>;
 export type ApplicationResponse = z.infer<typeof applicationResponseSchema>;
 export type ApplicationByUrlResponse = z.infer<
   typeof applicationByUrlResponseSchema
