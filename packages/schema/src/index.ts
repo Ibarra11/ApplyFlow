@@ -114,6 +114,19 @@ export const applicationsResponseSchema = z.object({
   applications: z.array(applicationSchema),
 });
 
+export const applicationsQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(10),
+});
+
+export const paginatedApplicationsResponseSchema = z.object({
+  applications: z.array(applicationSchema),
+  page: z.number().int(),
+  pageSize: z.number().int(),
+  total: z.number().int(),
+  totalPages: z.number().int(),
+});
+
 export const applicationByUrlQuerySchema = z.object({
   url: z.url(),
 });
@@ -170,6 +183,10 @@ export type ApplicationByUrlResponse = z.infer<
   typeof applicationByUrlResponseSchema
 >;
 export type ApplicationsResponse = z.infer<typeof applicationsResponseSchema>;
+export type ApplicationsQuery = z.infer<typeof applicationsQuerySchema>;
+export type PaginatedApplicationsResponse = z.infer<
+  typeof paginatedApplicationsResponseSchema
+>;
 export type ApplicationByUrlQuery = z.infer<typeof applicationByUrlQuerySchema>;
 export type JobMatchResult = z.infer<typeof jobMatchResultSchema>;
 export type JobMatchRequest = z.infer<typeof jobMatchRequestSchema>;

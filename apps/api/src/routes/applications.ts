@@ -1,8 +1,9 @@
 import {
   applicationByUrlQuerySchema,
+  applicationsQuerySchema,
   createApplicationRequestSchema,
 } from "@applyflow/schema";
-import { desc, eq } from "drizzle-orm";
+import { count, desc, eq } from "drizzle-orm";
 import { Router } from "express";
 
 import { db } from "../db/client";
@@ -65,16 +66,32 @@ applicationsRouter.get(
   },
 );
 
-applicationsRouter.get("/", async (_req, res, next) => {
-  try {
-    const rows = await db.query.applications.findMany({
-      orderBy: desc(applications.dateApplied),
-    });
+applicationsRouter.get(
+  "/",
+  validate({ query: applicationsQuerySchema }),
+  async (req, res, next) => {
+    try {
+      const { page, pageSize } = applicationsQuerySchema.parse(req.query);
+      const offset = (page - 1) * pageSize;
 
-    res.json({
-      applications: rows.map(toApplication),
-    });
-  } catch (err) {
-    next(err);
-  }
-});
+      const [rows, [{ value: total }]] = await Promise.all([
+        db.query.applications.findMany({
+          orderBy: desc(applications.dateApplied),
+          limit: pageSize,
+          offset,
+        }),
+        db.select({ value: count() }).from(applications),
+      ]);
+
+      res.json({
+        applications: rows.map(toApplication),
+        page,
+        pageSize,
+        total,
+        totalPages: Math.max(1, Math.ceil(total / pageSize)),
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+);
