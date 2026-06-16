@@ -1,4 +1,4 @@
-import { createOpenAI, OpenAIProvider } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { LanguageModel } from "ai";
 
 export default class OpenAIService {
