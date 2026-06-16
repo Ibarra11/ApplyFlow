@@ -6,13 +6,19 @@ import { storage } from "../../storage";
 import { queryClient } from "../query-client";
 import { queryKeys } from "../query-keys";
 
-async function parseJob(text: string): Promise<StoredJob> {
+type ParseJobInput = {
+  text: string;
+  url?: string | null;
+};
+
+async function parseJob({ text, url }: ParseJobInput): Promise<StoredJob> {
   const { data } = await api.post("/job/parse", { text });
 
   const { jobDescription } = parseJobResponseSchema.parse(data);
 
   return {
     jobDescription,
+    url: url ?? null,
     updatedAt: Date.now(),
   };
 }

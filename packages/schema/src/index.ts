@@ -83,7 +83,39 @@ export const parseJobResponseSchema = z.object({
 
 export const storedJobSchema = z.object({
   jobDescription: jobDescriptionSchema,
+  url: z.string().nullable().optional(),
   updatedAt: z.number(),
+});
+
+export const applicationSchema = z.object({
+  id: z.string().uuid(),
+  url: z.string().url(),
+  title: z.string().nullable(),
+  company: z.string().nullable(),
+  dateApplied: z.string(),
+  createdAt: z.string(),
+});
+
+export const createApplicationRequestSchema = z.object({
+  url: z.string().url(),
+  title: z.string().nullable(),
+  company: z.string().nullable(),
+});
+
+export const applicationResponseSchema = z.object({
+  application: applicationSchema,
+});
+
+export const applicationByUrlResponseSchema = z.object({
+  application: applicationSchema.nullable(),
+});
+
+export const applicationsResponseSchema = z.object({
+  applications: z.array(applicationSchema),
+});
+
+export const applicationByUrlQuerySchema = z.object({
+  url: z.url(),
 });
 
 export const answerQuestionRequestSchema = z.object({
@@ -129,6 +161,16 @@ export type JobDescription = z.infer<typeof jobDescriptionSchema>;
 export type ParseJobRequest = z.infer<typeof parseJobRequestSchema>;
 export type ParseJobResponse = z.infer<typeof parseJobResponseSchema>;
 export type StoredJob = z.infer<typeof storedJobSchema>;
+export type Application = z.infer<typeof applicationSchema>;
+export type CreateApplicationRequest = z.infer<
+  typeof createApplicationRequestSchema
+>;
+export type ApplicationResponse = z.infer<typeof applicationResponseSchema>;
+export type ApplicationByUrlResponse = z.infer<
+  typeof applicationByUrlResponseSchema
+>;
+export type ApplicationsResponse = z.infer<typeof applicationsResponseSchema>;
+export type ApplicationByUrlQuery = z.infer<typeof applicationByUrlQuerySchema>;
 export type JobMatchResult = z.infer<typeof jobMatchResultSchema>;
 export type JobMatchRequest = z.infer<typeof jobMatchRequestSchema>;
 export type JobMatchResponse = z.infer<typeof jobMatchResponseSchema>;

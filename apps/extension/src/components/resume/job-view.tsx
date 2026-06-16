@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { Briefcase, Loader2, ScanLine } from "lucide-react";
+import { Briefcase, CheckCircle2, Loader2, ScanLine } from "lucide-react";
 
 import { useParseJob } from "@/lib/api/mutations/use-parse-job";
+import { useTrackApplication } from "@/lib/api/mutations/use-track-application";
+import { useApplicationStatus } from "@/lib/api/queries/use-application-status";
 import { useParsedJob } from "@/lib/api/queries/use-parsed-job";
-import { grabActivePageText } from "@/lib/page-content";
+import { grabActivePage } from "@/lib/page-content";
+import { useActiveTabUrl } from "@/lib/use-active-tab-url";
 import type { JobDescription } from "@applyflow/schema";
 import { TextArea } from "./controls";
 import { SectionCard } from "./section-card";
@@ -25,24 +28,48 @@ function formatJobSummary(job: JobDescription) {
   return { role, meta, counts };
 }
 
+function formatAppliedDate(iso: string) {
+  return new Date(iso).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 export function JobView() {
+  const activeTabUrl = useActiveTabUrl();
   const { data: stored } = useParsedJob();
-  const { mutate: parseJob, isPending, isError } = useParseJob();
+  const { data: application, isLoading: statusLoading } =
+    useApplicationStatus(activeTabUrl);
+  const {
+    mutate: parseJob,
+    mutateAsync: parseJobAsync,
+    isPending: isParsing,
+    isError,
+  } = useParseJob();
+  const {
+    mutateAsync: trackApplication,
+    isPending: isTracking,
+    isError: isTrackError,
+  } = useTrackApplication();
+
   const [text, setText] = useState("");
   const [grabbing, setGrabbing] = useState(false);
   const [grabError, setGrabError] = useState<string | null>(null);
+  const [trackError, setTrackError] = useState<string | null>(null);
 
   const trimmed = text.trim();
   const job = stored?.jobDescription;
   const summary = job ? formatJobSummary(job) : null;
-  const busy = isPending || grabbing;
+  const busy = isParsing || grabbing || isTracking;
+  const alreadyApplied = !!application;
 
   async function handleGrab() {
     setGrabError(null);
     setGrabbing(true);
     try {
-      const pageText = await grabActivePageText();
-      parseJob(pageText);
+      const { url, text: pageText } = await grabActivePage();
+      parseJob({ text: pageText, url });
     } catch (err) {
       setGrabError(
         err instanceof Error ? err.message : "Couldn't read the page.",
@@ -52,8 +79,43 @@ export function JobView() {
     }
   }
 
+  async function handleTrackApplication() {
+    if (!activeTabUrl || alreadyApplied) return;
+
+    setTrackError(null);
+    try {
+      let jobDescription =
+        stored?.url === activeTabUrl ? stored.jobDescription : null;
+
+      if (!jobDescription) {
+        const { url, text: pageText } = await grabActivePage();
+        const parsed = await parseJobAsync({ text: pageText, url });
+        jobDescription = parsed.jobDescription;
+      }
+
+      await trackApplication({
+        url: activeTabUrl,
+        title: jobDescription.title,
+        company: jobDescription.company,
+      });
+    } catch (err) {
+      setTrackError(
+        err instanceof Error ? err.message : "Couldn't track application.",
+      );
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4 p-4">
+      {alreadyApplied && application && (
+        <div className="flex items-center gap-2 border-2 border-neutral-900 bg-lime-200 px-3 py-2 shadow-[3px_3px_0_0_#171717]">
+          <CheckCircle2 className="size-4 shrink-0 text-neutral-900" />
+          <p className="text-sm font-semibold text-neutral-900">
+            Applied on {formatAppliedDate(application.dateApplied)}
+          </p>
+        </div>
+      )}
+
       {summary && (
         <SectionCard label="Job" icon={Briefcase} accentClassName="bg-amber-300">
           <p className="text-sm font-semibold text-neutral-900">
@@ -116,9 +178,12 @@ export function JobView() {
           onSubmit={(e) => {
             e.preventDefault();
             if (!trimmed) return;
-            parseJob(trimmed, {
-              onSuccess: () => setText(""),
-            });
+            parseJob(
+              { text: trimmed },
+              {
+                onSuccess: () => setText(""),
+              },
+            );
           }}
         >
           <TextArea
@@ -142,7 +207,7 @@ export function JobView() {
             disabled={!trimmed || busy}
             className="inline-flex items-center justify-center gap-2 border-2 border-neutral-900 bg-white px-4 py-2.5 font-mono text-sm font-bold tracking-wide text-neutral-900 uppercase shadow-[4px_4px_0_0_#171717] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-amber-100 hover:shadow-[6px_6px_0_0_#171717] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_#171717] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0_0_#171717]"
           >
-            {isPending ? (
+            {isParsing ? (
               <>
                 <Loader2 className="size-4 shrink-0 animate-spin" />
                 Parsing…
@@ -153,6 +218,44 @@ export function JobView() {
           </button>
         </form>
       </fieldset>
+
+      <div className="flex items-center gap-3">
+        <span className="h-0.5 flex-1 bg-neutral-300" />
+        <span className="font-mono text-[0.625rem] font-bold tracking-wide text-neutral-500 uppercase">
+          Track application
+        </span>
+        <span className="h-0.5 flex-1 bg-neutral-300" />
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <p className="text-sm leading-relaxed text-neutral-700">
+          Finished applying? Save this job to your application tracker.
+        </p>
+
+        {(trackError || isTrackError) && (
+          <p role="alert" className="text-sm font-medium text-red-700">
+            {trackError ?? "Couldn't track application. Try again."}
+          </p>
+        )}
+
+        <button
+          type="button"
+          disabled={busy || alreadyApplied || !activeTabUrl || statusLoading}
+          onClick={handleTrackApplication}
+          className="inline-flex items-center justify-center gap-2 border-2 border-neutral-900 bg-lime-300 px-4 py-2.5 font-mono text-sm font-bold tracking-wide text-neutral-900 uppercase shadow-[4px_4px_0_0_#171717] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#171717] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_#171717] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0_0_#171717]"
+        >
+          {isTracking ? (
+            <>
+              <Loader2 className="size-4 shrink-0 animate-spin" />
+              Saving…
+            </>
+          ) : alreadyApplied ? (
+            "Already applied"
+          ) : (
+            "I applied →"
+          )}
+        </button>
+      </div>
     </div>
   );
 }
