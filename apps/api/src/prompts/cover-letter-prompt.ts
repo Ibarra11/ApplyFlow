@@ -69,6 +69,12 @@ Before finalizing:
 * Verify ownership language matches the resume — no inflated "led" or "built" claims for team contributions.
 * Ensure the letter sounds personal, specific, and human-written.
 * Use the current date together with the dates in the resume to determine proper verb tense.
+
+Additional instructions:
+
+* If the candidate provides optional instructions, follow them when writing the letter.
+* Instructions may cover tone, emphasis, topics to address, hiring manager name, employment gaps, or other direction.
+* Still obey all grounding rules above — do not invent experience, metrics, or ownership levels to satisfy an instruction.
 `;
 
 const STYLE_PROMPTS: Record<CoverLetterStyle, string> = {

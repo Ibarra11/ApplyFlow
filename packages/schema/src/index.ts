@@ -173,6 +173,7 @@ export const coverLetterRequestSchema = z.object({
   resume: resumeSchema,
   jobDescription: jobDescriptionSchema,
   style: coverLetterStyleSchema.default("concise"),
+  instructions: z.string().max(2000).optional(),
 });
 
 export const coverLetterResponseSchema = z.object({

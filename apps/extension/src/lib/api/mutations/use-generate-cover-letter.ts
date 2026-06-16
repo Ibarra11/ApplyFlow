@@ -14,6 +14,7 @@ export function useGenerateCoverLetter() {
       resume: Resume;
       jobDescription: JobDescription;
       style?: CoverLetterStyle;
+      instructions?: string;
     }) => {
       const { data } = await api.post("/ai/cover-letter", vars);
       return coverLetterResponseSchema.parse(data).coverLetter;

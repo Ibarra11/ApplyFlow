@@ -22,6 +22,7 @@ export function AskAi({ resume }: { resume: Resume }) {
   const [question, setQuestion] = useState("");
   const [coverLetterStyle, setCoverLetterStyle] =
     useState<CoverLetterStyle>("concise");
+  const [coverLetterInstructions, setCoverLetterInstructions] = useState("");
   const { data: storedJob } = useParsedJob();
   const {
     mutate: askQuestion,
@@ -135,6 +136,16 @@ export function AskAi({ resume }: { resume: Resume }) {
             </div>
           </fieldset>
 
+          <TextArea
+            id="cover-letter-instructions"
+            name="cover-letter-instructions"
+            aria-label="Cover letter instructions"
+            rows={2}
+            placeholder="Optional: anything to add or emphasize — tone, hiring manager name, gap to address…"
+            value={coverLetterInstructions}
+            onChange={(e) => setCoverLetterInstructions(e.target.value)}
+          />
+
           {!jobDescription && (
             <p className="text-sm text-amber-800">
               Parse a job on the Job tab first to generate a cover letter.
@@ -157,6 +168,8 @@ export function AskAi({ resume }: { resume: Resume }) {
                 resume,
                 jobDescription,
                 style: coverLetterStyle,
+                instructions:
+                  coverLetterInstructions.trim() || undefined,
               });
             }}
             className="inline-flex items-center justify-center gap-2 border-2 border-neutral-900 bg-emerald-400 px-4 py-2.5 font-mono text-sm font-bold tracking-wide text-neutral-900 uppercase shadow-[4px_4px_0_0_#171717] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_0_#171717] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0_0_#171717] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0_0_#171717]"

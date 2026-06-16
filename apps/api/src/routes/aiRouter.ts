@@ -54,11 +54,15 @@ aiRouter.post(
   "/cover-letter",
   validate({ body: coverLetterRequestSchema }),
   async (req, res) => {
-    const { resume, jobDescription, style } = req.body;
+    const { resume, jobDescription, style, instructions } = req.body;
 
     const openai = new OpenAIService();
 
-    const userContent = `Resume:\n${JSON.stringify(resume)}\n\nJob description:\n${JSON.stringify(jobDescription)}`;
+    const instructionsSection = instructions?.trim()
+      ? `\n\nAdditional instructions from the candidate:\n${instructions.trim()}`
+      : "";
+
+    const userContent = `Resume:\n${JSON.stringify(resume)}\n\nJob description:\n${JSON.stringify(jobDescription)}${instructionsSection}`;
 
     const currentDate = new Date().toLocaleDateString("en-US", {
       year: "numeric",
