@@ -1,5 +1,6 @@
 import {
   answerQuestionRequestSchema,
+  coverLetterRequestSchema,
   jobMatchRequestSchema,
   jobMatchResultSchema,
 } from "@applyflow/schema";
@@ -9,6 +10,7 @@ import { generateText, Output } from "ai";
 import OpenAIService from "../lib/openai";
 import { validate } from "../middleware/validate";
 import { buildAnswerQuestionPrompt } from "../prompts/answer-question-prompt";
+import { buildCoverLetterPrompt } from "../prompts/cover-letter-prompt";
 import { MATCH_JOB_PROMPT } from "../prompts/match-job-prompt";
 
 export const aiRouter = Router();
@@ -44,6 +46,37 @@ aiRouter.post(
     } catch (err) {
       console.error("Failed to generate answer:", err);
       res.status(502).json({ error: "Could not generate an answer" });
+    }
+  },
+);
+
+aiRouter.post(
+  "/cover-letter",
+  validate({ body: coverLetterRequestSchema }),
+  async (req, res) => {
+    const { resume, jobDescription, style } = req.body;
+
+    const openai = new OpenAIService();
+
+    const userContent = `Resume:\n${JSON.stringify(resume)}\n\nJob description:\n${JSON.stringify(jobDescription)}`;
+
+    const currentDate = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    try {
+      const { text } = await generateText({
+        model: openai.getModel(),
+        system: buildCoverLetterPrompt(currentDate, style),
+        messages: [{ role: "user", content: userContent }],
+      });
+
+      res.json({ coverLetter: text.trim() });
+    } catch (err) {
+      console.error("Failed to generate cover letter:", err);
+      res.status(502).json({ error: "Could not generate a cover letter" });
     }
   },
 );

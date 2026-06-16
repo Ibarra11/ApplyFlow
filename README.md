@@ -85,6 +85,7 @@ applyflow/
 | `POST` | `/resume/parse` | Parse an uploaded resume PDF into structured data |
 | `POST` | `/job/parse` | Parse raw job-posting text into a structured job description |
 | `POST` | `/ai/answer` | Draft an answer to an application question |
+| `POST` | `/ai/cover-letter` | Generate a tailored cover letter from resume + job description |
 | `POST` | `/ai/match` | Score a resume against a job description |
 | `GET` | `/applications` | List tracked applications (paginated, filterable by status) |
 | `GET` | `/applications/by-url` | Look up a tracked application by job URL |

@@ -160,6 +160,25 @@ export const answerQuestionResponseSchema = z.object({
   answer: z.string(),
 });
 
+export const coverLetterStyleSchema = z.enum([
+  "concise",
+  "technical",
+  "traditional",
+  "startup",
+]);
+
+export const COVER_LETTER_STYLES = coverLetterStyleSchema.options;
+
+export const coverLetterRequestSchema = z.object({
+  resume: resumeSchema,
+  jobDescription: jobDescriptionSchema,
+  style: coverLetterStyleSchema.default("concise"),
+});
+
+export const coverLetterResponseSchema = z.object({
+  coverLetter: z.string(),
+});
+
 export const jobMatchResultSchema = z.object({
   score: z.number().min(0).max(10),
   summary: z.string(),
@@ -181,6 +200,9 @@ export type AnswerQuestionRequest = z.infer<typeof answerQuestionRequestSchema>;
 export type AnswerQuestionResponse = z.infer<
   typeof answerQuestionResponseSchema
 >;
+export type CoverLetterRequest = z.infer<typeof coverLetterRequestSchema>;
+export type CoverLetterResponse = z.infer<typeof coverLetterResponseSchema>;
+export type CoverLetterStyle = z.infer<typeof coverLetterStyleSchema>;
 
 export type ResumeJob = z.infer<typeof resumeJobSchema>;
 export type ResumeProject = z.infer<typeof resumeProjectSchema>;
