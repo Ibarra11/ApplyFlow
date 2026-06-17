@@ -10,6 +10,6 @@ Rules:
 - Do not summarize, merge, or drop project bullets, and do not turn the first bullet into a description. Each bullet from the resume must be its own entry in details.
 - Return dates exactly as written in the resume.
 - Split the candidate's name into firstName and lastName.
-- Extract LinkedIn, GitHub, and website URLs if present.
+- Extract LinkedIn, GitHub, website, and project URLs if present.
 - Group skills into the provided categories; leave a category empty if nothing fits.
 `;

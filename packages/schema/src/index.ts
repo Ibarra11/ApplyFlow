@@ -261,3 +261,5 @@ export function emptySkills(): ResumeSkills {
     other: [],
   };
 }
+
+export { normalizeResumeUrls } from "./normalize-resume-urls.js";

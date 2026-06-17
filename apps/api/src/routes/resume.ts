@@ -1,7 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import { generateText, Output } from "ai";
-import { resumeSchema } from "@applyflow/schema";
+import { normalizeResumeUrls, resumeSchema } from "@applyflow/schema";
 
 import { validate } from "../middleware/validate";
 import { resumeUploadSchema } from "../schema/resume-upload";
@@ -46,7 +46,7 @@ resumeRouter.post(
         ],
       });
 
-      const resume = JSON.parse(text);
+      const resume = normalizeResumeUrls(JSON.parse(text));
 
       res.json({
         message: "Resume parsed successfully",
