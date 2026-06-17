@@ -262,4 +262,24 @@ export function emptySkills(): ResumeSkills {
   };
 }
 
-export { normalizeResumeUrls } from "./normalize-resume-urls.js";
+function normalizeUrl(value: string | null): string | null {
+  if (!value?.trim()) return null;
+
+  const trimmed = value.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^www\./i.test(trimmed)) return `https://${trimmed}`;
+  return `https://www.${trimmed}`;
+}
+
+export function normalizeResumeUrls(resume: Resume): Resume {
+  return {
+    ...resume,
+    linkedin: normalizeUrl(resume.linkedin),
+    github: normalizeUrl(resume.github),
+    website: normalizeUrl(resume.website),
+    projects: resume.projects.map((project) => ({
+      ...project,
+      url: normalizeUrl(project.url),
+    })),
+  };
+}
