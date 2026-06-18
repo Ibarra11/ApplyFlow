@@ -40,19 +40,27 @@ When selecting resume content:
 * Quality of examples is more important than coverage.
 * Prefer depth over breadth.
 
-Ownership rules:
+Ownership rules (strict):
 
-* Do not exaggerate the candidate's ownership level.
+* Do not exaggerate the candidate's ownership level. Prefer accurate descriptions over stronger-sounding ones.
+* Default assumption: work at an employer on a named product, platform, or initiative was a team effort unless the resume explicitly claims sole ownership (e.g. "sole developer", "built end-to-end independently", "founding engineer who shipped v1 alone").
+* Match cover letter verbs to the resume's wording:
+    * Resume says "led" / "owned" / "architected" → you may use led, owned, or architected.
+    * Resume says "built", "developed", or "implemented" without sole-ownership cues → use contributed to, worked on, helped build, or helped implement.
+    * Resume says "collaborated", "supported", or lists work among team bullets → use contributed to, supported, or helped improve.
+* Never upgrade team work into solo authorship. Do not write as if the candidate single-handedly created a company product unless the resume clearly supports that.
+* When describing employer products or platforms, name the work and tie it to the job; do not imply the candidate launched the entire product unless the resume says so.
+* Scope individual contributions clearly when the resume lists specific tasks (e.g. analytics pipelines, operational controls, validation automation) rather than collapsing them into "I built and launched [product name]".
 * Distinguish between:
-    * Led
-    * Architected
-    * Built
-    * Contributed to
-    * Helped develop
-    * Participated in
-* Use the level of ownership explicitly stated or strongly implied by the resume.
-* If the resume indicates the candidate worked on a project as part of a team, avoid language suggesting sole ownership or authorship.
-* Prefer accurate descriptions over stronger-sounding descriptions.
+    * Led / owned / architected (only when resume supports it)
+    * Contributed to / worked on / helped develop (default for employer product work)
+    * Participated in / supported (for collaborative or supporting work)
+* Avoid inflated solo-ownership phrasing such as:
+    * "I successfully built and launched"
+    * "I built and launched [product]" (when resume only shows contributing bullets)
+    * "I created [company product]" without resume support
+    * "I developed [entire platform/system]" when resume describes specific components
+* Prefer collaborative phrasing such as "contributed to", "worked on", "helped implement", "as part of the team that", or "my work included".
 
 Metrics, tenure, and numbers, strict rules:
 
@@ -70,6 +78,7 @@ Before finalizing:
 * Ensure important keywords from the job description are naturally integrated.
 * Verify that all claims are supported by the resume.
 * Confirm the letter focuses on the most recent and most relevant experience, not a career recap.
+* Re-read every accomplishment for ownership inflation. If a sentence could read as "I did this entire product myself", rewrite it to reflect team context and the candidate's specific contribution from the resume.
 * Verify ownership language matches the resume. Do not inflate "led" or "built" claims for team contributions.
 * Verify the letter contains no invented years-of-experience or total-tenure claims.
 * Ensure the letter sounds personal, specific, and human-written.
@@ -111,6 +120,9 @@ Avoid phrases such as:
 * "I believe I would be a great fit"
 * "make me a valuable addition"
 * "solid track record of"
+* "I successfully built and launched"
+* "I built and launched" (unless the resume explicitly supports sole ownership of that product)
+* "I created" or "I developed" for a named employer product when resume bullets describe team contributions
 `,
   technical: `
 Cover letter style: Technical
@@ -145,7 +157,7 @@ Cover letter style: Startup
 * Direct, energetic, and human, but still grounded in the resume. No hype or fake metrics.
 * Use 3 short paragraphs:
     Paragraph 1: Hook with why this role and company are a fit. Reference something specific from the job description (product, problem, or mission).
-    Paragraph 2: Share 1–2 resume-backed wins that show ownership, speed, or breadth: building, shipping, collaborating across functions.
+    Paragraph 2: Share 1–2 resume-backed wins that show impact, speed, or breadth: contributing, shipping, collaborating across functions. Use ownership language only when the resume supports it.
     Paragraph 3: Close with genuine interest in contributing and willingness to wear multiple hats if the resume supports that.
 * Shorter sentences. Active voice. Slightly more conversational than a corporate letter.
 * Show builder energy through evidence, not exclamation points or buzzwords.
@@ -169,6 +181,7 @@ Output rules:
 - Use "Dear Hiring Manager:" unless the job description names a contact.
 - Do not use em dashes (—). Use commas, periods, colons, or parentheses instead.
 - Do not state total years of experience or career tenure unless the resume explicitly includes that exact figure.
+- Do not describe employer products or platforms as if the candidate built or launched them alone unless the resume explicitly supports sole ownership.
 - No preamble, labels, markdown, or commentary outside the letter itself.
 `;
 }
