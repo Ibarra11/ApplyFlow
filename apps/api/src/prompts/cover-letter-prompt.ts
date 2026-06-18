@@ -54,10 +54,14 @@ Ownership rules:
 * If the resume indicates the candidate worked on a project as part of a team, avoid language suggesting sole ownership or authorship.
 * Prefer accurate descriptions over stronger-sounding descriptions.
 
-Metrics and numbers, strict rules:
+Metrics, tenure, and numbers, strict rules:
 
-* NEVER invent, estimate, round, or infer any number, percentage, dollar amount, count, timeline, growth rate, or scale claim unless that exact figure appears in the resume.
-* If the resume does not provide a metric, describe the impact qualitatively.
+* NEVER invent, estimate, round, or infer any number, percentage, dollar amount, count, timeline, growth rate, scale claim, or years-of-experience claim unless that exact figure appears in the resume.
+* NEVER state, estimate, or imply total years of experience (e.g. "over four years", "5+ years", "a decade of experience") unless the resume explicitly states that exact figure.
+* Do not calculate total career length by adding up employment date ranges.
+* Do not open the letter with a tenure summary or career-length claim. Open with a specific role, company, project, or accomplishment from the resume instead.
+* You may mention how long the candidate held a specific role only when both start and end dates for that role appear on the resume (e.g. "At Playback Rewards from 2022 to 2024, I...").
+* If the resume does not provide a metric or duration, describe the impact qualitatively.
 * Do not embellish resume facts with implied outcomes.
 * Every claim must be grounded in the resume.
 
@@ -67,6 +71,7 @@ Before finalizing:
 * Verify that all claims are supported by the resume.
 * Confirm the letter focuses on the most recent and most relevant experience, not a career recap.
 * Verify ownership language matches the resume. Do not inflate "led" or "built" claims for team contributions.
+* Verify the letter contains no invented years-of-experience or total-tenure claims.
 * Ensure the letter sounds personal, specific, and human-written.
 * Use the current date together with the dates in the resume to determine proper verb tense.
 
@@ -84,7 +89,7 @@ Cover letter style: Concise (default)
 * Target length: 150–250 words.
 * Sound like an experienced software engineer, not a recruiter or marketing writer.
 * Use 3 short paragraphs:
-    Paragraph 1: Open with a direct statement explaining why the candidate is a strong fit. Reference relevant resume experience. Avoid generic enthusiasm.
+    Paragraph 1: Open with a direct statement explaining why the candidate is a strong fit. Lead with a specific role, company, or accomplishment from the resume. Do not open with total years of experience or a career-length summary. Avoid generic enthusiasm.
     Paragraph 2: Highlight 1–2 accomplishments, projects, or systems that relate to the job. Explain how those experiences help in this role.
     Paragraph 3: Briefly explain why the opportunity is interesting and end with a professional closing.
 * Be concise and specific. Prioritize relevant experience over enthusiasm.
@@ -94,6 +99,9 @@ Cover letter style: Concise (default)
 
 Avoid phrases such as:
 * "I am excited to apply"
+* "I am eager to apply"
+* "With over X years of experience"
+* "X years of experience in"
 * "I am writing to express my interest"
 * "Your mission resonates with me"
 * "I admire your commitment to"
@@ -101,6 +109,8 @@ Avoid phrases such as:
 * "Thank you for your consideration"
 * "I am confident that my skills and experience"
 * "I believe I would be a great fit"
+* "make me a valuable addition"
+* "solid track record of"
 `,
   technical: `
 Cover letter style: Technical
@@ -158,6 +168,7 @@ Output rules:
 - Build the contact line from resume fields available (name, phone, email, website, LinkedIn, GitHub). Omit missing fields rather than inventing them.
 - Use "Dear Hiring Manager:" unless the job description names a contact.
 - Do not use em dashes (—). Use commas, periods, colons, or parentheses instead.
+- Do not state total years of experience or career tenure unless the resume explicitly includes that exact figure.
 - No preamble, labels, markdown, or commentary outside the letter itself.
 `;
 }
