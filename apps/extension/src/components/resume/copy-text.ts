@@ -79,7 +79,5 @@ export function educationText(items: ResumeEducation[]): string {
 }
 
 export function skillsText(skills: ResumeSkills): string {
-  return SKILL_CATEGORIES.filter(({ key }) => (skills[key] ?? []).length > 0)
-    .map(({ key, label }) => `${label}: ${skills[key].join(", ")}`)
-    .join("\n");
+  return SKILL_CATEGORIES.flatMap(({ key }) => skills[key] ?? []).join(", ");
 }
