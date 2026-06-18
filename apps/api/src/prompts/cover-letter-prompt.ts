@@ -54,7 +54,7 @@ Ownership rules:
 * If the resume indicates the candidate worked on a project as part of a team, avoid language suggesting sole ownership or authorship.
 * Prefer accurate descriptions over stronger-sounding descriptions.
 
-Metrics and numbers — strict rules:
+Metrics and numbers, strict rules:
 
 * NEVER invent, estimate, round, or infer any number, percentage, dollar amount, count, timeline, growth rate, or scale claim unless that exact figure appears in the resume.
 * If the resume does not provide a metric, describe the impact qualitatively.
@@ -65,8 +65,8 @@ Before finalizing:
 
 * Ensure important keywords from the job description are naturally integrated.
 * Verify that all claims are supported by the resume.
-* Confirm the letter focuses on the most recent and most relevant experience — not a career recap.
-* Verify ownership language matches the resume — no inflated "led" or "built" claims for team contributions.
+* Confirm the letter focuses on the most recent and most relevant experience, not a career recap.
+* Verify ownership language matches the resume. Do not inflate "led" or "built" claims for team contributions.
 * Ensure the letter sounds personal, specific, and human-written.
 * Use the current date together with the dates in the resume to determine proper verb tense.
 
@@ -74,7 +74,7 @@ Additional instructions:
 
 * If the candidate provides optional instructions, follow them when writing the letter.
 * Instructions may cover tone, emphasis, topics to address, hiring manager name, employment gaps, or other direction.
-* Still obey all grounding rules above — do not invent experience, metrics, or ownership levels to satisfy an instruction.
+* Still obey all grounding rules above. Do not invent experience, metrics, or ownership levels to satisfy an instruction.
 `;
 
 const STYLE_PROMPTS: Record<CoverLetterStyle, string> = {
@@ -109,7 +109,7 @@ Cover letter style: Technical
 * Lead with technical fit: languages, frameworks, systems, and architecture from the resume that match the role.
 * Use 3 paragraphs:
     Paragraph 1: State the role and summarize the candidate's most relevant technical background.
-    Paragraph 2: Go deep on 1–2 technical accomplishments — APIs, services, data pipelines, infrastructure, or product systems — and tie each to a specific job requirement.
+    Paragraph 2: Go deep on 1–2 technical accomplishments (APIs, services, data pipelines, infrastructure, or product systems) and tie each to a specific job requirement.
     Paragraph 3: Note interest in the team's technical challenges and close professionally.
 * Name specific technologies only when they appear on the resume or in the job description.
 * Favor precision over personality. Keep tone professional and engineer-to-engineer.
@@ -124,7 +124,7 @@ Cover letter style: Traditional
 * Paragraph 1: State the position and company. Express professional interest grounded in the role and organization.
 * Paragraph 2: Present the core value proposition with 1–2 resume-backed achievements connected to the job requirements.
 * Paragraph 3: Discuss cultural or mission alignment based on details from the job description and resume.
-* Paragraph 4: Professional call to action — mention the attached resume and interest in an interview.
+* Paragraph 4: Professional call to action. Mention the attached resume and interest in an interview.
 * Polished and respectful. Complete sentences. Moderate formality is appropriate.
 * Do not invent company facts. Only reference mission or values stated in the job description.
 `,
@@ -132,10 +132,10 @@ Cover letter style: Traditional
 Cover letter style: Startup
 
 * Target length: 175–275 words.
-* Direct, energetic, and human — but still grounded in the resume. No hype or fake metrics.
+* Direct, energetic, and human, but still grounded in the resume. No hype or fake metrics.
 * Use 3 short paragraphs:
     Paragraph 1: Hook with why this role and company are a fit. Reference something specific from the job description (product, problem, or mission).
-    Paragraph 2: Share 1–2 resume-backed wins that show ownership, speed, or breadth — building, shipping, collaborating across functions.
+    Paragraph 2: Share 1–2 resume-backed wins that show ownership, speed, or breadth: building, shipping, collaborating across functions.
     Paragraph 3: Close with genuine interest in contributing and willingness to wear multiple hats if the resume supports that.
 * Shorter sentences. Active voice. Slightly more conversational than a corporate letter.
 * Show builder energy through evidence, not exclamation points or buzzwords.
@@ -157,6 +157,7 @@ Output rules:
 - Return only the finished cover letter text, ready to paste into an application or document.
 - Build the contact line from resume fields available (name, phone, email, website, LinkedIn, GitHub). Omit missing fields rather than inventing them.
 - Use "Dear Hiring Manager:" unless the job description names a contact.
+- Do not use em dashes (—). Use commas, periods, colons, or parentheses instead.
 - No preamble, labels, markdown, or commentary outside the letter itself.
 `;
 }
