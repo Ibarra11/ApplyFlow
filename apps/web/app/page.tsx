@@ -12,9 +12,10 @@ import {
   ChevronRight,
   ExternalLink,
   Loader2,
+  Search,
   Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   PAGE_SIZE,
@@ -174,10 +175,23 @@ function FilterBar({
 export default function Home() {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState<StatusFilter>("all");
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchInput.trim());
+      setPage(1);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
   const { data, isLoading, isError, isPlaceholderData } = useApplications(
     page,
     filter,
     PAGE_SIZE,
+    debouncedSearch,
   );
 
   function handleFilterChange(value: StatusFilter) {
@@ -205,6 +219,18 @@ export default function Home() {
         </p>
       </header>
 
+      <div className="relative">
+        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-neutral-500" />
+        <input
+          type="search"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          placeholder="Search by title or company…"
+          aria-label="Search applications"
+          className="w-full border-2 border-neutral-900 bg-white py-2 pr-3 pl-9 font-mono text-sm text-neutral-900 shadow-[4px_4px_0_0_#171717] placeholder:text-neutral-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900"
+        />
+      </div>
+
       <FilterBar value={filter} onChange={handleFilterChange} />
 
       {isLoading ? (
@@ -222,9 +248,11 @@ export default function Home() {
       ) : total === 0 ? (
         <div className="border-2 border-dashed border-neutral-400 bg-white/60 p-10 text-center">
           <p className="text-sm text-neutral-600">
-            {filter === "all"
-              ? "No applications yet. Apply to a job from the extension and it'll show up here."
-              : `No ${statusLabels[filter]} applications.`}
+            {debouncedSearch
+              ? `No applications matching "${debouncedSearch}".`
+              : filter === "all"
+                ? "No applications yet. Apply to a job from the extension and it'll show up here."
+                : `No ${statusLabels[filter]} applications.`}
           </p>
         </div>
       ) : (

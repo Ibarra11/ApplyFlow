@@ -5,7 +5,7 @@ import {
   createApplicationRequestSchema,
   updateApplicationStatusRequestSchema,
 } from "@applyflow/schema";
-import { count, desc, eq, type SQL } from "drizzle-orm";
+import { count, and, desc, eq, or, sql, type SQL } from "drizzle-orm";
 import { Router } from "express";
 
 import { db } from "../db/client";
@@ -14,6 +14,37 @@ import { HttpError } from "../middleware/error-handler";
 import { validate } from "../middleware/validate";
 
 export const applicationsRouter = Router();
+
+function escapeLikePattern(value: string): string {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/%/g, "\\%")
+    .replace(/_/g, "\\_");
+}
+
+function buildApplicationsWhere(status?: DbApplication["status"], q?: string) {
+  const conditions: SQL[] = [];
+
+  if (status) {
+    conditions.push(eq(applications.status, status));
+  }
+
+  if (q) {
+    const pattern = `${escapeLikePattern(q.toLowerCase())}%`;
+    conditions.push(
+      or(
+        sql`lower(${applications.title}) LIKE ${pattern} ESCAPE '\\'`,
+        sql`lower(${applications.company}) LIKE ${pattern} ESCAPE '\\'`,
+      )!,
+    );
+  }
+
+  if (conditions.length === 0) {
+    return undefined;
+  }
+
+  return conditions.length === 1 ? conditions[0] : and(...conditions);
+}
 
 function toApplication(row: DbApplication) {
   return {
@@ -75,13 +106,11 @@ applicationsRouter.get(
   validate({ query: applicationsQuerySchema }),
   async (req, res, next) => {
     try {
-      const { page, pageSize, status } = applicationsQuerySchema.parse(
+      const { page, pageSize, status, q } = applicationsQuerySchema.parse(
         req.query,
       );
       const offset = (page - 1) * pageSize;
-      const where: SQL | undefined = status
-        ? eq(applications.status, status)
-        : undefined;
+      const where = buildApplicationsWhere(status, q);
 
       const [rows, [{ value: total }]] = await Promise.all([
         db.query.applications.findMany({
