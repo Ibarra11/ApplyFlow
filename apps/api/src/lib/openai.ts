@@ -7,7 +7,7 @@ export default class OpenAIService {
   constructor() {
     this.model = createOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
-    })("gpt-4o-mini");
+    })("gpt-4.1-mini");
   }
 
   getModel() {
