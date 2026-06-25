@@ -52,6 +52,7 @@ function toApplication(row: DbApplication) {
     url: row.url,
     title: row.title,
     company: row.company,
+    location: row.location,
     status: row.status,
     dateApplied: row.dateApplied.toISOString(),
     createdAt: row.createdAt.toISOString(),
@@ -63,14 +64,14 @@ applicationsRouter.post(
   validate({ body: createApplicationRequestSchema }),
   async (req, res, next) => {
     try {
-      const { url, title, company } = req.body;
+      const { url, title, company, location } = req.body;
 
       const [row] = await db
         .insert(applications)
-        .values({ url, title, company })
+        .values({ url, title, company, location })
         .onConflictDoUpdate({
           target: applications.url,
-          set: { title, company },
+          set: { title, company, location },
         })
         .returning();
 

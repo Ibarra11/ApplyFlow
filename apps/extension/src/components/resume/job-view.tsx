@@ -97,6 +97,7 @@ export function JobView() {
         url: activeTabUrl,
         title: jobDescription.title,
         company: jobDescription.company,
+        location: jobDescription.location,
       });
     } catch (err) {
       setTrackError(

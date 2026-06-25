@@ -101,6 +101,7 @@ export const applicationSchema = z.object({
   url: z.string().url(),
   title: z.string().nullable(),
   company: z.string().nullable(),
+  location: z.string().nullable(),
   status: applicationStatusSchema,
   dateApplied: z.string(),
   createdAt: z.string(),
@@ -110,6 +111,7 @@ export const createApplicationRequestSchema = z.object({
   url: z.string().url(),
   title: z.string().nullable(),
   company: z.string().nullable(),
+  location: z.string().nullable(),
 });
 
 export const updateApplicationStatusRequestSchema = z.object({

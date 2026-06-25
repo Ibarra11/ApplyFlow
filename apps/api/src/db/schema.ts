@@ -15,6 +15,7 @@ export const applications = pgTable(
     url: text("url").notNull().unique(),
     title: text("title"),
     company: text("company"),
+    location: text("location"),
     status: applicationStatus("status").notNull().default("pending"),
     dateApplied: timestamp("date_applied", { withTimezone: true })
       .notNull()

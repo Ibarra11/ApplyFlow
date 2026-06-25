@@ -12,6 +12,7 @@ import {
   ChevronRight,
   ExternalLink,
   Loader2,
+  MapPin,
   Search,
   Trash2,
 } from "lucide-react";
@@ -69,6 +70,12 @@ function ApplicationCard({ application }: { application: Application }) {
           <p className="flex items-center gap-1.5 truncate text-sm text-neutral-600">
             <Building2 className="size-4 shrink-0" />
             {application.company}
+          </p>
+        )}
+        {application.location && (
+          <p className="flex items-center gap-1.5 truncate text-sm text-neutral-600">
+            <MapPin className="size-4 shrink-0" />
+            {application.location}
           </p>
         )}
         <p className="font-mono text-xs tracking-wide text-neutral-500 uppercase tabular-nums">
