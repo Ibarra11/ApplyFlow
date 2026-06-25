@@ -5,7 +5,7 @@ import { useParseResume } from "@/lib/api/mutations/use-parse-resume";
 import { cn } from "@/lib/utils";
 
 export function ResumeUpload() {
-  const { mutate: parseResume, isPending, isError } = useParseResume();
+  const { mutate: parseResume, isPending, isError, error } = useParseResume();
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
 
@@ -90,7 +90,9 @@ export function ResumeUpload() {
 
       {isError && (
         <p role="alert" className="text-sm font-medium text-red-700">
-          Couldn't parse that file. Try a different PDF.
+          {error instanceof Error
+            ? error.message
+            : "Couldn't parse that file. Try a different PDF."}
         </p>
       )}
 

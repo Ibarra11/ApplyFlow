@@ -29,6 +29,7 @@ export function AskAi({ resume }: { resume: Resume }) {
     data: answer,
     isPending: isAnswering,
     isError: isAnswerError,
+    error: answerError,
     reset: resetAnswer,
   } = useAnswerQuestion();
   const {
@@ -36,6 +37,7 @@ export function AskAi({ resume }: { resume: Resume }) {
     data: coverLetter,
     isPending: isGeneratingCoverLetter,
     isError: isCoverLetterError,
+    error: coverLetterError,
     reset: resetCoverLetter,
   } = useGenerateCoverLetter();
 
@@ -71,7 +73,9 @@ export function AskAi({ resume }: { resume: Resume }) {
 
           {isAnswerError && (
             <p role="alert" className="text-sm font-medium text-red-700">
-              Couldn't generate an answer. Try again.
+              {answerError instanceof Error
+                ? answerError.message
+                : "Couldn't generate an answer. Try again."}
             </p>
           )}
 
@@ -154,7 +158,9 @@ export function AskAi({ resume }: { resume: Resume }) {
 
           {isCoverLetterError && (
             <p role="alert" className="text-sm font-medium text-red-700">
-              Couldn't generate a cover letter. Try again.
+              {coverLetterError instanceof Error
+                ? coverLetterError.message
+                : "Couldn't generate a cover letter. Try again."}
             </p>
           )}
 

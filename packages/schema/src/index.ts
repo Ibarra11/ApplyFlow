@@ -1,5 +1,16 @@
 import { z } from "zod";
 
+export {
+  apiErrorResponseSchema,
+  apiValidationIssueSchema,
+  formatApiErrorMessage,
+  formatValidationIssues,
+  formatValidationIssuesMessage,
+  isZodValidationError,
+  type ApiErrorResponse,
+  type ApiValidationIssue,
+} from "./api-error.js";
+
 export const resumeJobSchema = z.object({
   companyName: z.string().nullable(),
   title: z.string().nullable(),

@@ -46,6 +46,7 @@ export function JobView() {
     mutateAsync: parseJobAsync,
     isPending: isParsing,
     isError,
+    error: parseError,
   } = useParseJob();
   const {
     mutateAsync: trackApplication,
@@ -199,7 +200,9 @@ export function JobView() {
 
           {isError && (
             <p role="alert" className="text-sm font-medium text-red-700">
-              Couldn't parse the job description. Try again.
+              {parseError instanceof Error
+                ? parseError.message
+                : "Couldn't parse the job description. Try again."}
             </p>
           )}
 

@@ -194,7 +194,7 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  const { data, isLoading, isError, isPlaceholderData } = useApplications(
+  const { data, isLoading, isError, error, isPlaceholderData } = useApplications(
     page,
     filter,
     PAGE_SIZE,
@@ -248,8 +248,11 @@ export default function Home() {
       ) : isError ? (
         <div className="border-2 border-neutral-900 bg-red-100 p-4 shadow-[5px_5px_0_0_#171717]">
           <p className="text-sm font-semibold text-red-800">
-            Couldn&apos;t load applications. Make sure the API is running on{" "}
-            {process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"}.
+            {error instanceof Error
+              ? error.message
+              : `Couldn't load applications. Make sure the API is running on ${
+                  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001"
+                }.`}
           </p>
         </div>
       ) : total === 0 ? (

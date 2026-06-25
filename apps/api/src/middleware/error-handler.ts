@@ -1,3 +1,8 @@
+import {
+  formatValidationIssues,
+  formatValidationIssuesMessage,
+  isZodValidationError,
+} from "@applyflow/schema";
 import type { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 
@@ -11,6 +16,15 @@ export class HttpError extends Error {
   }
 }
 
+function validationErrorResponse(err: { issues: ZodError["issues"] }) {
+  const details = formatValidationIssues(err.issues);
+
+  return {
+    error: formatValidationIssuesMessage(details),
+    details,
+  };
+}
+
 export function notFoundHandler(_req: Request, res: Response) {
   res.status(404).json({ error: "Not found" });
 }
@@ -21,14 +35,8 @@ export function errorHandler(
   res: Response,
   _next: NextFunction,
 ) {
-  if (err instanceof ZodError) {
-    res.status(400).json({
-      error: "Validation failed",
-      details: err.issues.map((issue) => ({
-        path: issue.path.join("."),
-        message: issue.message,
-      })),
-    });
+  if (err instanceof ZodError || isZodValidationError(err)) {
+    res.status(400).json(validationErrorResponse(err));
     return;
   }
 

@@ -82,7 +82,7 @@ function MatchResult({ match }: { match: JobMatchResult }) {
 
 export function JobMatch({ resume }: { resume: Resume }) {
   const { data: storedJob } = useParsedJob();
-  const { mutate, data: match, isPending, isError } = useMatchJob();
+  const { mutate, data: match, isPending, isError, error } = useMatchJob();
 
   const jobDescription = storedJob?.jobDescription;
 
@@ -112,7 +112,9 @@ export function JobMatch({ resume }: { resume: Resume }) {
         <div className="flex flex-col gap-3">
           {isError && (
             <p role="alert" className="text-sm font-medium text-red-700">
-              Couldn't generate a match. Try again.
+              {error instanceof Error
+                ? error.message
+                : "Couldn't generate a match. Try again."}
             </p>
           )}
 
